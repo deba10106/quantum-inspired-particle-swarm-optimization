@@ -1,3 +1,6 @@
+# About the author
+![cv](cv.png)
+
 # Quantum-Inspired Particle Swarm Optimization (QPSO) vs Traditional PSO
 
 This repository provides comprehensive implementations and comparative studies of Quantum-Inspired Particle Swarm Optimization (QPSO) and traditional Particle Swarm Optimization (PSO) algorithms. Our analysis spans multiple optimization scenarios, from simple benchmark functions to complex real-world applications.
