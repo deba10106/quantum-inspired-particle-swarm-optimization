@@ -97,18 +97,33 @@ The visualization consists of four key plots:
    - Higher values (>0.8) for exploration
    - Lower values (<0.5) for exploitation
    - Consider linear decrease over iterations
+   - Scenario-specific recommendations:
+     * Portfolio Optimization: 0.7-0.8 (balance exploration/exploitation)
+     * Multimodal Functions: 0.8-0.9 (favor exploration)
+     * Constrained Problems: 0.5-0.6 (favor exploitation)
+     * High Dimensions: Start at 0.9, decrease to 0.4
 
 2. **Cognitive Parameter (c1)**
    - Recommended range: [1.0, 2.0]
    - Our optimal value: 1.49445
    - Affects personal best influence
    - Higher values may cause overshooting
+   - Scenario-specific recommendations:
+     * Portfolio Optimization: 1.5-1.7 (balanced learning)
+     * Risk-Averse Problems: 1.2-1.4 (conservative updates)
+     * Noisy Environments: 1.3-1.5 (stable convergence)
+     * Dynamic Problems: 1.7-1.9 (quick adaptation)
 
 3. **Social Parameter (c2)**
    - Recommended range: [1.0, 2.0]
    - Our optimal value: 1.49445
    - Affects global best influence
    - Balance with c1 for optimal performance
+   - Scenario-specific recommendations:
+     * Portfolio Optimization: 1.5-1.7 (swarm cohesion)
+     * Local Optima Risk: 1.2-1.4 (reduce premature convergence)
+     * Fast Convergence Needed: 1.8-2.0 (aggressive social learning)
+     * Deceptive Landscapes: 1.1-1.3 (cautious social influence)
 
 ### QPSO Parameters
 
@@ -117,29 +132,140 @@ The visualization consists of four key plots:
    - Our optimal value: 0.7
    - Decreases linearly with iterations
    - Controls quantum behavior extent
+   - Scenario-specific recommendations:
+     * Portfolio Optimization: 0.7-0.8 (balanced search)
+     * High Dimensions: 0.8-0.9 (enhanced exploration)
+     * Constrained Problems: 0.6-0.7 (controlled steps)
+     * Multimodal Functions: 0.75-0.85 (escape local optima)
+     * Dynamic Environments: Linear decrease from 0.9 to 0.5
 
 2. **Local Attractor Parameter (α)**
    - Recommended range: [0.5, 1.0]
    - Our optimal value: 0.8
    - Affects position update magnitude
    - Critical for convergence stability
+   - Scenario-specific recommendations:
+     * Portfolio Optimization: 0.7-0.8 (stable updates)
+     * Risk-Sensitive Problems: 0.6-0.7 (conservative moves)
+     * Exploration Priority: 0.8-0.9 (wider search)
+     * Fine-Tuning Phase: 0.5-0.6 (precise adjustments)
 
-### Problem-Specific Tuning
+### Advanced Scenarios
 
-1. **High-Dimensional Problems**
-   - Increase population size with dimensions
-   - Use larger β values for better exploration
-   - Consider longer run times
+1. **Time-Varying Parameters**
+   ```python
+   # Example: Dynamic β adjustment for QPSO
+   def update_beta(iteration, max_iterations):
+       beta_max = 0.9
+       beta_min = 0.5
+       return beta_max - (beta_max - beta_min) * (iteration / max_iterations)
+   ```
 
-2. **Multimodal Functions**
-   - Higher inertia weights in PSO
-   - Larger β values in QPSO
-   - Increase population diversity
+2. **Adaptive Population Size**
+   - Start with larger population (2-3x final size)
+   - Gradually reduce based on diversity metrics
+   - Minimum size recommendations:
+     * Low dimensions (<10): 20-30 particles
+     * Medium dimensions (10-50): 50-100 particles
+     * High dimensions (>50): 100-200 particles
 
-3. **Constrained Problems**
-   - Adjust penalty parameters carefully
-   - Use smaller step sizes
-   - Consider constraint handling methods
+3. **Constraint Handling**
+   ```python
+   # Example: Adaptive penalty weights
+   def update_penalty_weight(iteration, violation_history):
+       base_weight = 1000
+       avg_violation = np.mean(violation_history[-10:])
+       return base_weight * (1 + avg_violation)
+   ```
+
+### Problem-Specific Scenarios
+
+1. **High-Dimensional Portfolio Optimization**
+   - Population Size: 100-200 particles
+   - PSO Configuration:
+     ```python
+     w = 0.7  # Balance exploration/exploitation
+     c1 = c2 = 1.5  # Equal personal/social learning
+     ```
+   - QPSO Configuration:
+     ```python
+     beta = 0.8  # Enhanced exploration
+     alpha = 0.7  # Stable updates
+     ```
+   - Recommended iterations: 200-500
+
+2. **Multimodal Function Optimization**
+   - Population Size: 50-100 particles
+   - PSO Configuration:
+     ```python
+     w = 0.8  # Favor exploration
+     c1 = 1.4  # Reduced personal influence
+     c2 = 1.2  # Reduced social influence
+     ```
+   - QPSO Configuration:
+     ```python
+     beta = 0.85  # Strong quantum behavior
+     alpha = 0.8  # Wide search range
+     ```
+   - Recommended iterations: 100-300
+
+3. **Constrained Optimization**
+   - Population Size: 30-50 particles
+   - PSO Configuration:
+     ```python
+     w = 0.6  # Favor exploitation
+     c1 = c2 = 1.3  # Conservative learning
+     ```
+   - QPSO Configuration:
+     ```python
+     beta = 0.6  # Controlled steps
+     alpha = 0.6  # Conservative updates
+     ```
+   - Recommended iterations: 150-250
+
+4. **Dynamic Environments**
+   - Population Size: 40-80 particles
+   - PSO Configuration:
+     ```python
+     w = linear_decrease(0.9, 0.4)  # Dynamic inertia
+     c1 = 1.7  # Strong personal learning
+     c2 = 1.5  # Moderate social learning
+     ```
+   - QPSO Configuration:
+     ```python
+     beta = dynamic_beta(0.9, 0.5)  # Adaptive quantum behavior
+     alpha = 0.75  # Balanced updates
+     ```
+   - Recommended iterations: 50-100 per change
+
+### Performance Monitoring
+
+1. **Convergence Metrics**
+   ```python
+   def check_convergence(history, window=20, threshold=1e-6):
+       if len(history) < window:
+           return False
+       recent_improvement = abs(history[-1] - history[-window])
+       return recent_improvement < threshold
+   ```
+
+2. **Diversity Measures**
+   ```python
+   def population_diversity(positions):
+       return np.mean([np.std(pos) for pos in positions.T])
+   ```
+
+3. **Parameter Adaptation**
+   ```python
+   def adapt_parameters(diversity, iteration, max_iterations):
+       if diversity < threshold:
+           # Increase exploration
+           w = min(0.9, w + 0.1)
+           beta = min(1.0, beta + 0.1)
+       else:
+           # Standard linear decrease
+           w = w_max - (w_max - w_min) * (iteration / max_iterations)
+   ```
 
 ## Implementation Details
 
