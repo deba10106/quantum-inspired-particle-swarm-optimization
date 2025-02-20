@@ -387,7 +387,7 @@ If you use this code in your research, please cite:
 ```bibtex
 @software{qpso_comparison,
   title = {Quantum-Inspired Particle Swarm Optimization vs Traditional PSO},
-  author = {Your Name},
+  author = {Debasis Mondal},
   year = {2025},
   url = {https://github.com/yourusername/quantum-inspired-pso}
 }
